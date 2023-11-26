@@ -6,6 +6,7 @@ const cookieParser = require("cookie-parser");
 const { MongoClient, ServerApiVersion } = require("mongodb");
 // const jwt = require("jsonwebtoken");
 const morgan = require("morgan");
+const { ObjectId } = require("mongodb");
 const port = process.env.PORT || 5000;
 // middleware
 const corsOptions = {
@@ -30,14 +31,33 @@ const client = new MongoClient(process.env.DB_URI, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
 
     const propertiesCollection = client
       .db("propertiesDB")
       .collection("properties");
+
+    // cart collection
+    const wishlistCollection = client.db("propertiesDB").collection("wishlist");
+    //post wishlist collection
+    app.post("/wishlist", async (req, res) => {
+      const item = req.body;
+      const result = await wishlistCollection.insertOne(item);
+      console.log(result);
+      res.send(result);
+    });
+   
     //get all properties
     app.get("/properties", async (req, res) => {
       const result = await propertiesCollection.find().toArray();
+      res.send(result);
+    });
+    //get data by id
+    app.get("/properties/:id", async (req, res) => {
+      const id = req.params.id;
+      const result = await propertiesCollection.findOne({
+        _id: new ObjectId(id),
+      });
       res.send(result);
     });
     // Send a ping to confirm a successful connection
