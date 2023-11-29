@@ -31,7 +31,7 @@ const client = new MongoClient(process.env.DB_URI, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    // await client.connect();
+    await client.connect();
 
     const propertiesCollection = client
       .db("propertiesDB")
@@ -46,7 +46,15 @@ async function run() {
       console.log(result);
       res.send(result);
     });
-   
+    //get wishlist collection base by email
+    app.get("/wishlist", async (req, res) => {
+      const email = req.query.email;
+
+      const query = { email: email };
+      const result = await wishlistCollection.find(query).toArray();
+      console.log(result);
+      res.send(result);
+    });
     //get all properties
     app.get("/properties", async (req, res) => {
       const result = await propertiesCollection.find().toArray();
