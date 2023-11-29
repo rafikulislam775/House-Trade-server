@@ -55,6 +55,7 @@ async function run() {
       console.log(result);
       res.send(result);
     });
+
     //get all properties
     app.get("/properties", async (req, res) => {
       const result = await propertiesCollection.find().toArray();
@@ -66,6 +67,15 @@ async function run() {
       const result = await propertiesCollection.findOne({
         _id: new ObjectId(id),
       });
+      res.send(result);
+    });
+    //delete properties
+    app.delete("/wishlist/:id", async (req, res) => {
+      const id = req.params.id;
+      const result = await wishlistCollection.deleteOne({
+        _id: new ObjectId(id),
+      });
+      console.log(result);
       res.send(result);
     });
     // Send a ping to confirm a successful connection
