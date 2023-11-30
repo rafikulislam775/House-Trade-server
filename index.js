@@ -39,6 +39,16 @@ async function run() {
 
     // cart collection
     const wishlistCollection = client.db("propertiesDB").collection("wishlist");
+    //reviews collection
+    const reviewsCollection = client.db("propertiesDB").collection("reviews");
+
+    //post reviews collection
+    app.post("/reviews", async (req, res) => {
+      const item = req.body;
+      const result = await reviewsCollection.insertOne(item);
+      console.log(result);
+      res.send(result);
+    });
     //post wishlist collection
     app.post("/wishlist", async (req, res) => {
       const item = req.body;
