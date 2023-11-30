@@ -49,6 +49,12 @@ async function run() {
       console.log(result);
       res.send(result);
     });
+
+    //get all reviews
+    app.get("/reviews", async (req, res) => {
+      const result = await reviewsCollection.find().toArray();
+      res.send(result);
+    });
     //post wishlist collection
     app.post("/wishlist", async (req, res) => {
       const item = req.body;
@@ -59,7 +65,6 @@ async function run() {
     //get wishlist collection base by email
     app.get("/wishlist", async (req, res) => {
       const email = req.query.email;
-
       const query = { email: email };
       const result = await wishlistCollection.find(query).toArray();
       console.log(result);
