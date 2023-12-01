@@ -4,17 +4,32 @@ require("dotenv").config();
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const { MongoClient, ServerApiVersion } = require("mongodb");
-// const jwt = require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 const morgan = require("morgan");
 const { ObjectId } = require("mongodb");
 const port = process.env.PORT || 5000;
 // middleware
-const corsOptions = {
-  origin: ["http://localhost:5173", "http://localhost:5174"],
-  credentials: true,
-  optionSuccessStatus: 200,
-};
-app.use(cors(corsOptions));
+// const corsOptions = {
+//   // origin: ["http://localhost:5173", "http://localhost:5174"],
+//   origin: [
+//     "http://localhost:5173",
+//     "https://house-trade.web.app/",
+//     "house-trade.firebaseapp.com",
+//     " https://house-trade-server.vercel.app/properties",
+//   ],
+//   credentials: true,
+//   // optionSuccessStatus: 200,
+// };
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://house-trade.web.app",
+      "house-trade.firebaseapp.com",
+    ],
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
 app.use(morgan("dev"));
@@ -31,7 +46,7 @@ const client = new MongoClient(process.env.DB_URI, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
 
     const propertiesCollection = client
       .db("propertiesDB")
@@ -41,7 +56,14 @@ async function run() {
     const wishlistCollection = client.db("propertiesDB").collection("wishlist");
     //reviews collection
     const reviewsCollection = client.db("propertiesDB").collection("reviews");
-
+    //user collection
+    const usersCollection = client.db("propertiesDB").collection("users");
+    //user collection api
+    app.post("/users", async (req, res) => {
+      const user = req.body;
+      const result = await usersCollection.insertOne(user);
+      res.send(result);
+    });
     //post reviews collection
     app.post("/reviews", async (req, res) => {
       const item = req.body;
@@ -94,7 +116,7 @@ async function run() {
       res.send(result);
     });
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
+    // await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
