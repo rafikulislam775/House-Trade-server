@@ -71,6 +71,13 @@ async function run() {
       console.log(result);
       res.send(result);
     });
+    //get all user
+
+    app.get("/users", async (req, res) => {
+      const result = await usersCollection.find().toArray();
+      res.send(result);
+    });
+
     //post reviews collection
     app.post("/reviews", async (req, res) => {
       const item = req.body;
