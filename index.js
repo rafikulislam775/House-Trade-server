@@ -84,6 +84,18 @@ async function run() {
       const result = await usersCollection.deleteOne(query);
       res.send(result);
     });
+    //uset update user to admin role
+    app.patch("/users/admin/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const updateDoc = {
+        $set: {
+          role: "admin",
+        },
+      };
+      const result = await usersCollection.updateOne(filter, updateDoc);
+      res.send(result);
+    });
     //post reviews collection
     app.post("/reviews", async (req, res) => {
       const item = req.body;
