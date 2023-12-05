@@ -109,6 +109,25 @@ async function run() {
       const result = await reviewsCollection.find().toArray();
       res.send(result);
     });
+    //get reviews by sorting by email
+    // app.get("/reviews", async (req, res) => {
+    //   const email = req.query.email;
+    //   const query = { email: email };
+    //   const result = await reviewsCollection.find(query).toArray();
+    //   // console.log(result);
+    //   res.send(result);
+    // });
+
+    app.get("/reviews", async (req, res) => {
+      const email = req.query.email;
+      const query = email ? { email: email } : {};
+      const result = await reviewsCollection
+        .find(query)
+        .sort({ email: 1 })
+        .toArray();
+      res.send(result);
+    });
+
     //post wishlist collection
     app.post("/wishlist", async (req, res) => {
       const item = req.body;
